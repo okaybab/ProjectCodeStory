@@ -1,0 +1,17 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{61BC4896-431F-A56F-E8D7-6BB36C997497}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "Mee_HTTP",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG"
+			]
+		}
+	]
+}
