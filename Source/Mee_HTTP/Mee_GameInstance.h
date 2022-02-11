@@ -19,5 +19,8 @@ public:
 	FString Session;
 	FString ItemType;
 	FString ItemName;
+
+	UFUNCTION(BlueprintCallable)
+	void GetUserData(FString& OutItemType, FString& OutItemName);
 	
 };

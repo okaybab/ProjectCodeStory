@@ -2,6 +2,7 @@
 
 
 #include "CodeStoryProtocol.h"
+#include "CodeStorySocketClientLibBPLibrary.h"
 
 // =====================================================================================================================================
 // =====================================================================================================================================
@@ -36,11 +37,18 @@ bool CodeStoryProtocolStrategy::Start(const FString& Addr, int32 Port)
     FSocket* Socket=nullptr;
 
     Socket = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM) -> CreateSocket(NAME_Stream, TEXT("ue4-tcp-client"));
+    
+    //소켓 버퍼 사이즈 조정
+   /* int NewSize;
+    Socket->SetSendBufferSize(96, NewSize);
+    FString qqq = FString::FromInt(NewSize);
+    GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, qqq);*/
 
     // 현 프로토콜에 생성된 FSocket 객체를 등록합니다.
     Protocol->SetSocket(Socket);
     Protocol->SetAddr(Addr);
     Protocol->SetPort(Port);
+    
 
     // 원격 서버와 연결을 시도합니다.
     FRunnableThread::Create( Protocol, TEXT( "This is my thread example" ) );
@@ -92,7 +100,7 @@ bool CodeStoryTcpProtocol::Connect()
     return bConnected;
 }
 
-ElasticPacket CodeStoryTcpProtocol::Recv(int32 RecvDataSize)
+ElasticPacket CodeStoryTcpProtocol::Recv(int32 RecvDataSize)//소켓버퍼의 크기만큼 받음.
 {
     // 만약 소켓 객체가 생성되있는 경우와 연결 상태가 SCS_Connected (연결중) 일 경우
     if(Socket != nullptr && Socket->GetConnectionState() == ESocketConnectionState::SCS_Connected)
@@ -103,13 +111,13 @@ ElasticPacket CodeStoryTcpProtocol::Recv(int32 RecvDataSize)
             // 바이트 버퍼 선언
             TArray<uint8> ReceivedData;
             int32 BytesCnt = 0;
-            
+
             // 버퍼 초기화 0을 DEFAULT_BUF_SIZE만큼
             ReceivedData.Init(0, DEFAULT_BUF_SIZE);
             
             // 데이터를 읽어와서 버퍼에 담습니다.
             Socket -> Recv(ReceivedData.GetData(), DEFAULT_BUF_SIZE, BytesCnt);
-            
+
             // 만약 수신한 버퍼 크기가 0보다 크다면
             if(ReceivedData.Num() > 0)
             {
@@ -118,14 +126,22 @@ ElasticPacket CodeStoryTcpProtocol::Recv(int32 RecvDataSize)
                 // 아직 데이터가 남았는지 확인
                 uint32 RecvPayloadDataSize;
                 Socket->HasPendingData(RecvPayloadDataSize);
-                GEngine->AddOnScreenDebugMessage(-1, 10.f,
+                GEngine->AddOnScreenDebugMessage(-1, 100.f,
                                                  FColor::Black,
                                                  FString::Printf(TEXT("Payload size: %d"), Packet.AmountOfData));
-                GEngine->AddOnScreenDebugMessage(-1, 10.f,
+                GEngine->AddOnScreenDebugMessage(-1, 100.f,
                                                  FColor::Black,
                                                  FString::Printf(TEXT("Recv payload has pending data size: %d"), RecvDataSize));
-                if(RecvPayloadDataSize > 0 && RecvPayloadDataSize >= Packet.AmountOfData)
+
+                if(RecvPayloadDataSize > 0 )
                 {
+                    GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, TEXT("RecvPayloadDataSize > 0"));
+
+                    if (RecvPayloadDataSize >= Packet.AmountOfData)
+                    {
+                        GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, TEXT("RecvPayloadDataSize >= Packet.AmountOfData"));
+                    }
+                    
                     BytesCnt = 0;
                     TArray<uint8> PayloadData;
                     PayloadData.Init(0, Packet.AmountOfData);
@@ -137,8 +153,9 @@ ElasticPacket CodeStoryTcpProtocol::Recv(int32 RecvDataSize)
                 }
                 else
                 {
+                    GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, TEXT("else"));
                     Socket -> Recv(ReceivedData.GetData(), RecvPayloadDataSize, BytesCnt);
-                    return { (uint16) 65535, (uint16) 65535, 4294967295, 4294967295, (uint8*) 2 };
+                    return { (uint16) 0, (uint16) 0, 0, 0, (uint8*) 0 };
                 }
                 
                 return Packet;
@@ -151,7 +168,7 @@ ElasticPacket CodeStoryTcpProtocol::Recv(int32 RecvDataSize)
             }
         }
     }
-        return { (uint16)65535, (uint16)65535, 4294967295, 4294967295, (uint8*)255 };
+    return { (uint16)0, (uint16)0, 0, 0, (uint8*)0 };
 }
 
 void CodeStoryTcpProtocol::RecvWaitLoop()
@@ -163,19 +180,20 @@ void CodeStoryTcpProtocol::RecvWaitLoop()
         
         if(RecvDataSize > 0)
         {
+            GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, TEXT("RecvWatiLoop()"));
             ElasticPacket Packet = Recv(RecvDataSize);
             
-            if(Packet.ChannelId == 4294967295)
+            /*if(Packet.ChannelId == 4294967295)
             {
                 continue;
-            }
+            }*/
             
             CodeStoryProtocolDecoder<FString>* Decoder = Observer -> GetDecoder();
             FString Decoded = Decoder -> Decode(Packet.Payload);
             void* Wrapped = &Decoded;
-            
+
             Observer -> SendNotificationReceived(Packet, Wrapped);
-            //delete Packet.Payload;
+            delete Packet.Payload;
         }
         FPlatformProcess::Sleep(1.0f);
     }
@@ -184,8 +202,8 @@ void CodeStoryTcpProtocol::RecvWaitLoop()
 uint32 CodeStoryTcpProtocol::Run()
 {
     Connect();
-    RecvWaitLoop();
-    return 0;
+    //RecvWaitLoop();
+    return bThreadRun;
 }
 
 void CodeStoryTcpProtocol::Stop()
@@ -216,6 +234,7 @@ ElasticPacket CodeStoryTcpProtocol::Send(ElasticPacket Packet)
         int32 Sent = 0;
 
         Socket -> Send(Serial, DEFAULT_BUF_SIZE + Packet.AmountOfData, Sent);
+        Socket->SetSendBufferSize(Packet.AmountOfData, Sent);
         delete Packet.Payload;
         
         return Packet;

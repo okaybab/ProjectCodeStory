@@ -3,3 +3,8 @@
 
 #include "Mee_GameInstance.h"
 
+void UMee_GameInstance::GetUserData(FString& OutItemType, FString& OutItemName)
+{
+	OutItemType = ItemType;
+	OutItemName = ItemName;
+}

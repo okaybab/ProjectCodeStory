@@ -9,9 +9,11 @@ UCodeStorySocketClientLibBPLibrary::UCodeStorySocketClientLibBPLibrary(const FOb
 
 }
 
-void UCodeStorySocketClientLibBPLibrary::Recv()
+FString UCodeStorySocketClientLibBPLibrary::Recv()
 {
-    ElasticPacket Packet = ProtocolStrategy -> GetCurrentProtocol() -> Recv(1024);
+    uint32 RecvDataSize;
+    ProtocolStrategy->GetCurrentProtocol()->Socket->HasPendingData(RecvDataSize);
+    ElasticPacket Packet = ProtocolStrategy->GetCurrentProtocol()->Recv(RecvDataSize);
 
     // 수신한 데이터 다시 디코딩
     CodeStoryProtocolDecoder<FString>* Decoder = ProtocolObserver -> GetDecoder();
@@ -20,6 +22,8 @@ void UCodeStorySocketClientLibBPLibrary::Recv()
 
     ProtocolObserver -> SendNotificationReceived(Packet, Wrapped);
     delete Packet.Payload;
+
+    return Decoded;
 }
 
 bool UCodeStorySocketClientLibBPLibrary::ConnectToServer(FString Addr, int32 Port)
@@ -29,39 +33,15 @@ bool UCodeStorySocketClientLibBPLibrary::ConnectToServer(FString Addr, int32 Por
     return bCreated;
 }
 
-//void UCodeStorySocketClientLibBPLibrary::Send(FString Message)
-//{
-//    uint16 Channel = (int16) _Channel;
-//    uint16 Event =  (int16) CodeStoryMessengerEvent::SEND;
-//    uint32 PayloadDataType = (int32) ElasticPacketType::STRING;
-//    uint32 Size = Message.Len() + 1;
-//    int32 NewSize;
-//    uint8* PayloadBinary = DataSerializer::StringToBinary(Message, NewSize);
-//    
-//    ElasticPacket Packet;
-//    Packet.ChannelId = Channel;
-//    Packet.EventId = Event;
-//    Packet.AmountOfData = Size;
-//    Packet.TypeId = PayloadDataType;
-//    Packet.Payload = PayloadBinary;
-//    
-//    ElasticPacket TransmittedPacket = ProtocolStrategy -> GetCurrentProtocol() -> Send(Packet);
-//    
-//    ProtocolObserver -> SendNotificationTransimitted(TransmittedPacket);
-//}
-
 void UCodeStorySocketClientLibBPLibrary::SendMessageToChannel(int32 _Channel, FString Message)
 {
     uint16 Channel = (uint16) _Channel;
-    uint16 Event =  (int16) CodeStoryMessengerEvent::SEND;
+    uint16 Event =  (int16)CodeStoryMessengerEvent::SEND;
     uint32 PayloadDataType = (int32) ElasticPacketType::STRING;
     uint32 Size = Message.Len() + 1;
     int32 NewSize;
     uint8* PayloadBinary = DataSerializer::StringToBinary(Message, NewSize);
     
-    //GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, Message);
-    
-
     ElasticPacket Packet;
     Packet.ChannelId = Channel;
     Packet.EventId = Event;
@@ -71,6 +51,46 @@ void UCodeStorySocketClientLibBPLibrary::SendMessageToChannel(int32 _Channel, FS
     
     ElasticPacket TransmittedPacket = ProtocolStrategy -> GetCurrentProtocol() -> Send(Packet);
     ProtocolObserver -> SendNotificationTransimitted( TransmittedPacket );
+}
+
+void UCodeStorySocketClientLibBPLibrary::CreateRoom()
+{
+    GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, TEXT("Creat Room"));
+
+    uint16 Channel = (uint16)20;
+    uint16 Event = (int16) CodeStoryMessengerEvent::CREATE_ROOM;
+    uint32 PayloadDataType = (uint32)ElasticPacketType::INT_32;
+    uint8* PayloadBinary = DataSerializer::IntToBinary(20);//chanalID
+
+    ElasticPacket Packet;
+    Packet.ChannelId = Channel;
+    Packet.EventId = Event;
+    Packet.TypeId = PayloadDataType;
+    Packet.Payload = PayloadBinary;
+    Packet.AmountOfData = 4;
+
+    ElasticPacket TransmittedPacket = ProtocolStrategy->GetCurrentProtocol()->Send(Packet);
+    ProtocolObserver->SendNotificationTransimitted(TransmittedPacket);
+}
+
+void UCodeStorySocketClientLibBPLibrary::JoinRoom()
+{
+    GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, TEXT("JoinRoom"));
+
+    uint16 Channel = (uint16) 20U;
+    uint16 Event = (int16)CodeStoryMessengerEvent::JOIN_ROOM;
+    uint32 PayloadDataType = (int32)ElasticPacketType::INT_32;
+    uint8* PayloadBinary = DataSerializer::IntToBinary(20);//chanalID
+
+    ElasticPacket Packet;
+    Packet.ChannelId = Channel;
+    Packet.EventId = Event;
+    Packet.TypeId = PayloadDataType;
+    Packet.Payload = PayloadBinary;
+    Packet.AmountOfData = 4;
+
+    ElasticPacket TransmittedPacket = ProtocolStrategy->GetCurrentProtocol()->Send(Packet);
+    ProtocolObserver->SendNotificationTransimitted(TransmittedPacket);
 }
 
 void UCodeStorySocketClientLibBPLibrary::SendMessage(FString Message)

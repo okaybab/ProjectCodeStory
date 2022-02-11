@@ -107,7 +107,6 @@ void AHttpActor::OnResponseReceived_BuyItem(FHttpRequestPtr Request, FHttpRespon
 void AHttpActor::BeginPlay()
 {
 	MyGameInstance = Cast<UMee_GameInstance>(GetGameInstance());
-	//HttpCall_BuyItem("Body","item01");
 	Super::BeginPlay();
 }
 

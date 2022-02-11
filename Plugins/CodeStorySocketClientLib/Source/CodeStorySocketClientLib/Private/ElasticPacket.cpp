@@ -231,10 +231,10 @@ FString DataDeSerializer::BinaryToString(TArray<uint8> Data)
 
 FString DataDeSerializer::BinaryUINT8ToStringUTF8(uint8* Data)
 {
-    TCHAR* T = (TCHAR*) UTF8_TO_TCHAR(Data);
+    TCHAR* T = UTF8_TO_TCHAR(Data);
     FString DeserializedBinaryPayload = T;
     UE_LOG(LogTemp, Log, TEXT("ASASDSA:: %s"), *DeserializedBinaryPayload);
-             
+    
     return DeserializedBinaryPayload;
 }
 
