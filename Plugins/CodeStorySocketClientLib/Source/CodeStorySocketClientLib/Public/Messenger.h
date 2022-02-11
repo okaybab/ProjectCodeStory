@@ -13,8 +13,9 @@ enum CODESTORYSOCKETCLIENTLIB_API CodeStoryMessengerChannel
 
 enum CODESTORYSOCKETCLIENTLIB_API CodeStoryMessengerEvent
 {
-    SEND = 0,
-    RECEIVE = 1
+    CREATE_ROOM = 0,
+    SEND = 1,
+    JOIN_ROOM = 2
 };
 
 class CODESTORYSOCKETCLIENTLIB_API CodeStoryMessengerAPI

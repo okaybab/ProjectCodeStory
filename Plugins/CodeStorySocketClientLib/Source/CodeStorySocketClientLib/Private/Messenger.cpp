@@ -11,7 +11,7 @@ void CodeStoryMessengerListener::OnReceived(ElasticPacket Packet, void* RecvPayl
 {
     FString* RecvData = static_cast<FString*>(RecvPayload);
     
-    GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::Printf(TEXT("Called OnReceived")));
+    GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("Called OnReceived")));
     GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::Printf(TEXT("Packet.ChannelId : %d"), Packet.ChannelId));
     GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::Printf(TEXT("Packet.EventId : %d"), Packet.EventId));
     GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Black, FString::Printf(TEXT("Packet.AmountOfData : %d"), Packet.AmountOfData));
@@ -84,7 +84,7 @@ CodeStoryMessageDecoder::CodeStoryMessageDecoder(StringPacketTemplate _StringPac
 FString CodeStoryMessageDecoder::Decode(uint8* Payload)
 {
     FString Data = PacketTemplate.Deserialize(Payload);
-    UE_LOG(LogTemp, Log, TEXT("%s"), *Data);
+    UE_LOG(LogTemp, Warning, TEXT("%s"), *Data);
     
     return Data;
 }

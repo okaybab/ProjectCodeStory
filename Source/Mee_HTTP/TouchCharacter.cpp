@@ -121,6 +121,7 @@ void ATouchCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 void ATouchCharacter::MoveForward(float NewAxisValue)
 {
+	//AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::X), NewAxisValue);
 	
 	APlayerCameraManager* Cameramanager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 	if (Cameramanager)
@@ -132,7 +133,9 @@ void ATouchCharacter::MoveForward(float NewAxisValue)
 
 void ATouchCharacter::MoveRight(float NewAxisValue)
 {
-	
+	//ABLOG(Warning, TEXT("%f"), NewAxisValue);
+	//AddMovementInput(FRotationMatrix(GetControlRotation()).GetUnitAxis(EAxis::Y), NewAxisValue);
+
 	APlayerCameraManager* Cameramanager = UGameplayStatics::GetPlayerCameraManager(this, 0);
 	if (Cameramanager)
 	{
@@ -143,6 +146,7 @@ void ATouchCharacter::MoveRight(float NewAxisValue)
 
 void ATouchCharacter::LookUp(float NewAxisValue)
 {
+	//ABLOG(Warning, TEXT("%f"), NewAxisValue);
 	AddControllerPitchInput(NewAxisValue);
 }
 
@@ -153,9 +157,11 @@ void ATouchCharacter::Turn(float NewAxisValue)
 
 void ATouchCharacter::TouchPressed(ETouchIndex::Type FingerIndex, FVector Location)
 {
+	//ABLOG(Warning);
 	if (FingerIndex == ETouchIndex::Touch1 || FingerIndex == ETouchIndex::Touch2)
 	{
 		TouchStart = GetTouchScreenLocation();
+		//ABLOG(Warning, TEXT("%f%f"), TouchStart.X, TouchStart.Y);
 	}
 }
 
@@ -166,6 +172,7 @@ void ATouchCharacter::TouchMoved(ETouchIndex::Type FingerIndex, FVector Location
 		TouchEnd = GetTouchScreenLocation();
 		IsTouchPress = true;
 		SpringArm->bUsePawnControlRotation = false;
+		//ABLOG(Warning, TEXT("%d"), IsTouchPress);
 	}
 }
 
@@ -175,6 +182,7 @@ void ATouchCharacter::TouchReleased(ETouchIndex::Type FingerIndex, FVector Locat
 	{
 		IsTouchPress = false;
 		SpringArm->bUsePawnControlRotation = true;
+		//ABLOG(Warning, TEXT("%d"), IsTouchPress);
 	}
 }
 
