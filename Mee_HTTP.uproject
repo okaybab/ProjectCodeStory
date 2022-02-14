@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{5A9EEA42-4277-841F-2284-DD8A8DA359EE}",
+	"EngineAssociation": "{3C22AB5E-4AA7-6DFF-A152-A380D13CCFB8}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,6 +12,17 @@
 				"Engine",
 				"UMG"
 			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "RealTimeImport",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/5625d7b404e44200bb2f9cdb7dcf1c6a"
+		},
+		{
+			"Name": "ElectraPlayer",
+			"Enabled": true
 		}
 	]
 }
