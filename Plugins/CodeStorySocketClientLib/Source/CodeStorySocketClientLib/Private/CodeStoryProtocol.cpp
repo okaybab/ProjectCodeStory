@@ -2,7 +2,6 @@
 
 
 #include "CodeStoryProtocol.h"
-#include "CodeStorySocketClientLibBPLibrary.h"
 
 // =====================================================================================================================================
 // =====================================================================================================================================
@@ -202,7 +201,7 @@ void CodeStoryTcpProtocol::RecvWaitLoop()
 uint32 CodeStoryTcpProtocol::Run()
 {
     Connect();
-    //RecvWaitLoop();
+    RecvWaitLoop();
     return bThreadRun;
 }
 
@@ -216,6 +215,10 @@ void CodeStoryTcpProtocol::Exit()
 
 }
 
+FSocket* CodeStoryTcpProtocol::Get_Socket()
+{
+    return Socket;
+}
 
 ElasticPacket CodeStoryTcpProtocol::Send(ElasticPacket Packet)
 {
@@ -240,7 +243,7 @@ ElasticPacket CodeStoryTcpProtocol::Send(ElasticPacket Packet)
         return Packet;
     }
     else {
-        return { (uint16) 65535, (uint16) 65535, 4294967295, 4294967295, (uint8*) 255 };
+        return { (uint16) 65535u, (uint16) 65535u, 4294967295u, 4294967295u, (uint8*) 255u };
     }
 }
 
