@@ -107,7 +107,7 @@ void ULoginWidget::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttp
 			GameInstance->ItemName = Object->GetStringField(TEXT("itemName"));
 			GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemName);
 
-			UGameplayStatics::OpenLevel(this, "LobbyLevel");//Level 이동
+			UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
 		}
 	}
 }
