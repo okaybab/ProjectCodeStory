@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+#include "ElasticPacket.h"
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "CodeStorySocketClientLibBPLibrary.generated.h"
@@ -24,7 +25,9 @@
 UCLASS()
 class UCodeStorySocketClientLibBPLibrary : public UBlueprintFunctionLibrary
 {
-	GENERATED_UCLASS_BODY()
+    GENERATED_UCLASS_BODY()
+
+        FString Message;
 
     UFUNCTION(BlueprintCallable)
     static bool ConnectToServer(FString Addr, int32 Port);

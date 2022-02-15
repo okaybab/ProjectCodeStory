@@ -12,7 +12,7 @@ UCodeStorySocketClientLibBPLibrary::UCodeStorySocketClientLibBPLibrary(const FOb
 FString UCodeStorySocketClientLibBPLibrary::Recv()
 {
     uint32 RecvDataSize;
-    ProtocolStrategy->GetCurrentProtocol()->Socket->HasPendingData(RecvDataSize);
+    ProtocolStrategy->GetCurrentProtocol()->Get_Socket()->HasPendingData(RecvDataSize);
     ElasticPacket Packet = ProtocolStrategy->GetCurrentProtocol()->Recv(RecvDataSize);
 
     // 수신한 데이터 다시 디코딩

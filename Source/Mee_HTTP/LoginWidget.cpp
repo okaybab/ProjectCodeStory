@@ -73,8 +73,8 @@ void ULoginWidget::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr 
 			FString Session;
 			if (JsonObject->TryGetStringField(TEXT("session"), Session))//로그인 성공
 			{
-				GameInstance->Session = Session;
-				GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, GameInstance->Session);
+				GameInstance->GetSession() = Session;
+				GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, GameInstance->GetSession());
 				HttpCall_GetUserData(); //로그인 성공 시 유저 데이터를 가져온다.
 			}
 			else //로그인 에러
@@ -107,7 +107,7 @@ void ULoginWidget::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttp
 			GameInstance->ItemName = Object->GetStringField(TEXT("itemName"));
 			GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemName);
 
-			UGameplayStatics::OpenLevel(this, "LobbyLevel");//Level 이동
+			UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
 		}
 	}
 }
