@@ -34,4 +34,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FString GetString();
 
+	UFUNCTION(BlueprintCallable)
+	void InitializeURL();
 };
