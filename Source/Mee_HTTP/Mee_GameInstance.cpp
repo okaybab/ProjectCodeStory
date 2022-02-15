@@ -14,12 +14,12 @@ FString UMee_GameInstance::GetSession()
 	return Session;
 }
 
-uint32 UMee_GameInstance::GetMoney()
+int32 UMee_GameInstance::GetMoney()
 {
 	return Money;
 }
 
-void UMee_GameInstance::SetMoney(uint32 _Money)
+void UMee_GameInstance::SetMoney(int32 _Money)
 {
 	Money = _Money;
 }

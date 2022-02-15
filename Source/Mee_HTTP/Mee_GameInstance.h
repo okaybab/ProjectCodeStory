@@ -20,7 +20,7 @@ private:
 public:
 	FString ItemType;
 	FString ItemName;
-	uint32 Money;
+	int32 Money;
 
 	FString GetSession();
 
@@ -28,9 +28,9 @@ public:
 		void GetUserData(FString& OutItemType, FString& OutItemName);
 
 	UFUNCTION(BlueprintCallable)
-		uint32 GetMoney();
+		int32 GetMoney();
 
 	UFUNCTION(BlueprintCallable)
-		void SetMoney(uint32 _Money);
+		void SetMoney(int32 _Money);
 	
 };
