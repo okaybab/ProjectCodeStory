@@ -74,7 +74,7 @@ void ATestUploadImage::UploadImage()
 
 	HttpRequest->SetHeader("User-Agent", "X-UnrealEngine-Agent");
 	HttpRequest->SetHeader("Content-Type", "application/json");
-	HttpRequest->SetHeader("Authorization", "Client-ID 47beae464ad1a25");
+	HttpRequest->SetHeader("Authorization", "Client-ID 23a29002d89ffae");
 
 	TSharedRef<FJsonObject> JsonObject_Writer = MakeShared<FJsonObject>();
 
@@ -100,5 +100,11 @@ void ATestUploadImage::UploadImage()
 FString ATestUploadImage::GetString()
 {
 	return p;
+}
+
+void ATestUploadImage::InitializeURL()
+{
+	p = "INPUTURL";
+
 }
 
