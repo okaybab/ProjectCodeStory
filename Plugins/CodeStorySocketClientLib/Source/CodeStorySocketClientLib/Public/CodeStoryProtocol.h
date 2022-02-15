@@ -15,7 +15,7 @@ class CodeStoryProtocolObserver;
 
 class CODESTORYSOCKETCLIENTLIB_API CodeStoryProtocol : public FRunnable
 {
-public:
+protected:
     FString Addr;
     int32 Port;
     FSocket* Socket;
@@ -33,9 +33,12 @@ public:
     virtual ElasticPacket Recv(int32 RecvDataSize) = 0;
     virtual void RecvWaitLoop() = 0;
     virtual ElasticPacket Send(ElasticPacket Packet) = 0;
+
     virtual void SetSocket(FSocket* Socket) = 0;
     virtual void SetAddr(FString inputAddr) = 0;
     virtual void SetPort(int32 inputPort) = 0;
+
+    virtual FSocket* Get_Socket() = 0;
     
     virtual FIPv4Address ParseStringAddressToIp(const FString& Addr) = 0;
 };
@@ -56,6 +59,8 @@ public:
     virtual void SetAddr(FString inputAddr) = 0;
     virtual void SetPort(int32 inputPort) = 0;
 
+    virtual FSocket* Get_Socket() = 0;
+
     virtual ElasticPacket Send(ElasticPacket Packet) = 0;
 
     void SetSocket(FSocket* Socket);
@@ -75,6 +80,8 @@ public:
     ElasticPacket Send(ElasticPacket Packet);
     void SetAddr(FString inputAddr);
     void SetPort(int32 inputPort);
+
+    FSocket* Get_Socket();
     
     uint32 Run();
     void Stop();

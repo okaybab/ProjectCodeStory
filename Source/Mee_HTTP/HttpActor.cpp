@@ -48,7 +48,7 @@ void AHttpActor::HttpCall_BuyItem(FString type, FString itemCode)
 	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_BuyItem);
 
 	//FString PostBody = FString::Printf(TEXT("{ \"session\" : \"%s\", \"type\": \"%s\", \"itemCode\" : \"%s\" }"), *(MyGameInstance->Session), *type, *itemCode);
-	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"itemName\": \"%s\", \"itemType\" : \"%s\" }"), TEXT("skaeodud0507"), *type, *itemCode);
+	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"itemName\": \"%s\", \"itemType\" : \"%s\" }"), TEXT("skaeodud0507"), *itemCode, *type);
 
 	Request->SetURL(BUYITEM_URL);
 	Request->SetVerb("POST");
