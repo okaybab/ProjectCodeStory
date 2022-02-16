@@ -19,7 +19,7 @@ class MEE_HTTP_API UChattingWidget : public UUserWidget
 
 public:
 	UPROPERTY(meta = (BindWidget))
-		class UScrollBox* ScrollBox;
+		class UScrollBox* ScrollBox_Recv;
 
 	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UEditableText* EditableText_Input;
@@ -29,4 +29,7 @@ public:
 
 	UFUNCTION()
 		void OnClick_Send();
+
+	UFUNCTION(BlueprintCallable)
+		void SetScrollBox(FString _Message);
 };

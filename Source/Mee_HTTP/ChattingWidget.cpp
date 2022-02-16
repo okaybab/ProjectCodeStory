@@ -9,20 +9,25 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "UMG/Public/Components/Button.h"
 
+
 void UChattingWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	Button_Send->OnClicked.AddDynamic(this, &UChattingWidget::OnClick_Send);
 }
 
 void UChattingWidget::OnClick_Send()
 {
 	//실제로 메세지를 전송하는 'SendMessageToChannel'함수는 BP에서 호출한다.
-	//JW_HUD에서 connect server 한다.
 	EditableText_Input->SetText(FText::GetEmpty());
+}
 
-	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox);
+void UChattingWidget::SetScrollBox(FString _Message)
+{
+	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_Recv);
 	NewTextBlock->SetText(FText::FromString(""));
 
-	ScrollBox->AddChild(NewTextBlock);
-	ScrollBox->ScrollToEnd();
+	ScrollBox_Recv->AddChild(NewTextBlock);
+	ScrollBox_Recv->ScrollToEnd();
 }
