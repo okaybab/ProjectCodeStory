@@ -17,7 +17,11 @@ class MEE_HTTP_API UChattingWidget : public UUserWidget
 	
 	virtual void NativeConstruct() override;
 
+public:
 	UPROPERTY(meta = (BindWidget))
+		class UScrollBox* ScrollBox;
+
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 		class UEditableText* EditableText_Input;
 
 	UPROPERTY(meta = (BindWidget))
