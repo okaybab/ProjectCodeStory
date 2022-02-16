@@ -65,7 +65,7 @@ void ATestUploadImage::UploadImage()
 
 	TArray<FString> OpenFileNames;
 
-	DesktopPlatform->OpenFileDialog(NULL, TEXT("OpenFile"), DefaultPath, DefaultFile, TEXT("Image Files | *.png; *.jpg, *.bmp"),
+	DesktopPlatform->OpenFileDialog(NULL, TEXT("OpenFile"), DefaultPath, DefaultFile, TEXT("Image Files | *.png; *.jpg; *.bmp;"),
 		EFileDialogFlags::None, OpenFileNames);
 
 	auto HttpRequest = FHttpModule::Get().CreateRequest();
