@@ -130,32 +130,6 @@ void ULoginWidget::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttp
 	}
 }
 
-void ULoginWidget::OnResponseReceived_GetEquipment(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-{
-	//Create a pointer to hold the json serialized data
-	TSharedPtr<FJsonObject> JsonObject;
-
-	//Create a reader pointer to read the json data
-	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-
-	//Deserialize the json data given Reader and the actual object to deserialize
-	if (FJsonSerializer::Deserialize(Reader, JsonObject))//유저 데이터를 가져오는데 성공
-	{
-		const TArray<TSharedPtr<FJsonValue>>* Value;
-		if (JsonObject->TryGetArrayField(TEXT("userItems"), Value))
-		{
-			TSharedPtr<FJsonObject> Object = (*Value)[0]->AsObject();
-			//GameInstance->ItemType = Object->GetStringField(TEXT("itemType"));
-			//GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemType);
-
-			//GameInstance->ItemName = Object->GetStringField(TEXT("itemName"));
-			//GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemName);
-
-			//UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
-		}
-	}
-}
-
 //Like 'BeginPlay'
 void ULoginWidget::NativeConstruct()
 {
