@@ -8,9 +8,8 @@
 #include "Mee_GameInstance.h"
 #include "HttpActor.generated.h"
 
-#define LOGIN_URL "http://192.168.110.200:3000/user/authentication/signin"
-#define SIGNUP_URL "http://192.168.110.200:3000/user/authentication/signup"
 #define BUYITEM_URL "http://192.168.110.200:3000/shop/buy"
+#define EQUIPITEM_URL "http://192.168.110.200:3000/user/item/equipment"
 
 UCLASS()
 class MEE_HTTP_API AHttpActor : public AActor
@@ -24,17 +23,13 @@ public:
 
 	AHttpActor(const class FObjectInitializer& ObjectInitializer);
 
-	UFUNCTION()
-		void HttpCall_Login(FString id, FString password);
-
-	UFUNCTION()
-		void HttpCall_Signup(FString id, FString username, FString password);
-
 	UFUNCTION(BlueprintCallable)
-		void HttpCall_BuyItem(FString type, FString itemCode);
+		void HttpCall_EquipItem(FString HairCode, FString BodyCode);
+	UFUNCTION(BlueprintCallable)
+		void HttpCall_BuyItem(FString itemCode, FString itemType);
 
 	// http GET 요청 직후 호출되는 콜백함수
-	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
+	void OnResponseReceived_EquipItem(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void OnResponseReceived_BuyItem(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
 protected:

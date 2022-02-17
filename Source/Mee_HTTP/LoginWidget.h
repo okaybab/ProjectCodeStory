@@ -37,7 +37,6 @@ public:
 
 	// http GET 요청 직후 호출되는 콜백함수
 	void OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-	void OnResponseReceived_GetEquipment(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 	void OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
 
 	virtual void NativeConstruct() override;
