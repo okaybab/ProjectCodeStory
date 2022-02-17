@@ -11,15 +11,14 @@ AHttpActor::AHttpActor(const class FObjectInitializer& ObjectInitializer)
 	Http = &FHttpModule::Get();
 }
 
-
-void AHttpActor::HttpCall_Login(FString id, FString password)
+void AHttpActor::HttpCall_EquipItem(FString HairCode, FString BodyCode)
 {
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
-	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived);
+	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_EquipItem);
 
-	FString PostBody = FString::Printf(TEXT("{ \"id\": \"%s\", \"password\" : \"%s\" }"), *id, *password);
+	FString PostBody = FString::Printf(TEXT("{ \"username\" : \"%s\", \"itemHair\": \"%s\", \"itemBody\" : \"%s\" }"), *(MyGameInstance->UserID), *HairCode, *BodyCode);
 
-	Request->SetURL(LOGIN_URL);
+	Request->SetURL(EQUIPITEM_URL);
 	Request->SetVerb("POST");
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
 	Request->SetHeader("Content-Type", TEXT("application/json"));
@@ -27,28 +26,12 @@ void AHttpActor::HttpCall_Login(FString id, FString password)
 	Request->ProcessRequest();
 }
 
-void AHttpActor::HttpCall_Signup(FString id, FString username, FString password)
-{
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
-	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived);
-
-	FString PostBody = FString::Printf(TEXT("{ \"id\": \"%s\", \"username\" : \"%s\", \"password\" : \"%s\" }"), *id, *username, *password);
-
-	Request->SetURL(SIGNUP_URL);
-	Request->SetVerb("POST");
-	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", TEXT("application/json"));
-	Request->SetContentAsString(PostBody);
-	Request->ProcessRequest();
-}
-
-void AHttpActor::HttpCall_BuyItem(FString type, FString itemCode)
+void AHttpActor::HttpCall_BuyItem(FString itemCode, FString itemType)
 {
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_BuyItem);
 
-	//FString PostBody = FString::Printf(TEXT("{ \"session\" : \"%s\", \"type\": \"%s\", \"itemCode\" : \"%s\" }"), *(MyGameInstance->GetSession()), *type, *itemCode);
-	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"itemName\": \"%s\", \"itemType\" : \"%s\" }"), TEXT("skaeodud0507"), *itemCode, *type);
+	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"itemName\": \"%s\", \"itemType\" : \"%s\" }"), *(MyGameInstance->UserID), *itemCode, *itemType);
 
 	Request->SetURL(BUYITEM_URL);
 	Request->SetVerb("POST");
@@ -58,7 +41,30 @@ void AHttpActor::HttpCall_BuyItem(FString type, FString itemCode)
 	Request->ProcessRequest();
 }
 
-void AHttpActor::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+void AHttpActor::OnResponseReceived_EquipItem(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	//Create a pointer to hold the json serialized data
+	TSharedPtr<FJsonObject> JsonObject;
+
+	//Create a reader pointer to read the json data
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+	//Deserialize the json data given Reader and the actual object to deserialize
+	if (FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		double Check;
+		if (JsonObject->TryGetNumberField(TEXT("ok"), Check))
+		{
+			GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, TEXT("200"));
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Red, Response->GetContentAsString());
+		}
+	}
+}
+
+void AHttpActor::OnResponseReceived_BuyItem(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	//Create a pointer to hold the json serialized data
 	TSharedPtr<FJsonObject> JsonObject;
@@ -77,28 +83,14 @@ void AHttpActor::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Re
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, Response->GetContentAsString());
-		}
-	}
-}
-
-void AHttpActor::OnResponseReceived_BuyItem(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
-{
-	//Create a pointer to hold the json serialized data
-	TSharedPtr<FJsonObject> JsonObject;
-
-	//Create a reader pointer to read the json data
-	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-
-	//Deserialize the json data given Reader and the actual object to deserialize
-	if (FJsonSerializer::Deserialize(Reader, JsonObject))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Red, TEXT("Successed"));
-		const TArray<TSharedPtr<FJsonValue>>* Value;
-		if (JsonObject->TryGetArrayField(TEXT("message"), Value))
-		{
-			FString MessageField = (*Value)[0]->AsString();
-			GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Yellow, MessageField);	
+			double money;
+			if (JsonObject->TryGetNumberField(TEXT("money"), money)) {
+				MyGameInstance->Money = money;
+				GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, FString::FromInt(MyGameInstance->Money));
+			}
+			else {
+				GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, Response->GetContentAsString());
+			}
 		}
 	}
 }
