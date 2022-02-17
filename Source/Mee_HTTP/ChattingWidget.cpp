@@ -26,7 +26,7 @@ void UChattingWidget::OnClick_Send()
 void UChattingWidget::SetScrollBox(FString _Message)
 {
 	UTextBlock* NewTextBlock = NewObject<UTextBlock>(ScrollBox_Recv);
-	NewTextBlock->SetText(FText::FromString(""));
+	NewTextBlock->SetText(FText::FromString(_Message));
 
 	ScrollBox_Recv->AddChild(NewTextBlock);
 	ScrollBox_Recv->ScrollToEnd();

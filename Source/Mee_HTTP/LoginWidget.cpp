@@ -44,7 +44,8 @@ void ULoginWidget::HttpCall_GetUserData()
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &ULoginWidget::OnResponseReceived_GetUserData);
 
-	Request->SetURL(GET_USERDATA_URL);
+	FString RequestURL = GET_USERDATA_URL + GameInstance->UserID;
+	Request->SetURL(RequestURL);
 	Request->SetVerb("GET");
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
 	Request->SetHeader("Content-Type", TEXT("application/json"));
@@ -71,11 +72,22 @@ void ULoginWidget::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr 
 		else
 		{
 			FString Session;
+			FString UserID;
 			if (JsonObject->TryGetStringField(TEXT("session"), Session))//로그인 성공
 			{
-				GameInstance->GetSession() = Session;
-				GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, GameInstance->GetSession());
-				HttpCall_GetUserData(); //로그인 성공 시 유저 데이터를 가져온다.
+				GameInstance->Session = Session;
+				GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, GameInstance->Session);
+				if (JsonObject->TryGetStringField(TEXT("userId"), UserID))//세션 저장 후, 유저 아이디 저장
+				{
+					GameInstance->UserID = UserID;
+					GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, GameInstance->UserID);
+
+					HttpCall_GetUserData(); //로그인 성공 시 유저 데이터를 가져온다.
+				}
+				else//로그인 에러
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 62.0f, FColor::Green, Response->GetContentAsString());
+				}
 			}
 			else //로그인 에러
 			{
@@ -97,17 +109,49 @@ void ULoginWidget::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttp
 	//Deserialize the json data given Reader and the actual object to deserialize
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))//유저 데이터를 가져오는데 성공
 	{
+		FString EquipmentBody = JsonObject->GetStringField(TEXT("equipmentBody"));
+		FString EquipmentHair = JsonObject->GetStringField(TEXT("equipmentHair"));
+		int32 Money = JsonObject->GetIntegerField(TEXT("money"));
+
+		GameInstance->EquipmentBody = EquipmentBody;
+		GameInstance->EquipmentHair = EquipmentHair;
+		GameInstance->Money = Money;
+
+		const TArray<TSharedPtr<FJsonValue>>* Inventory;
+		if (JsonObject->TryGetArrayField(TEXT("inventory"), Inventory))
+		{
+			for (int i = 0; i < Inventory->Num(); ++i)
+			{
+				TSharedPtr<FJsonObject> Object = (*Inventory)[i]->AsObject();
+				GameInstance->Inventory.Add(Object->GetStringField(TEXT("itemName")));
+			}
+			UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
+		}
+	}
+}
+
+void ULoginWidget::OnResponseReceived_GetEquipment(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	//Create a pointer to hold the json serialized data
+	TSharedPtr<FJsonObject> JsonObject;
+
+	//Create a reader pointer to read the json data
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+	//Deserialize the json data given Reader and the actual object to deserialize
+	if (FJsonSerializer::Deserialize(Reader, JsonObject))//유저 데이터를 가져오는데 성공
+	{
 		const TArray<TSharedPtr<FJsonValue>>* Value;
 		if (JsonObject->TryGetArrayField(TEXT("userItems"), Value))
 		{
 			TSharedPtr<FJsonObject> Object = (*Value)[0]->AsObject();
-			GameInstance->ItemType = Object->GetStringField(TEXT("itemType"));
-			GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemType);
+			//GameInstance->ItemType = Object->GetStringField(TEXT("itemType"));
+			//GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemType);
 
-			GameInstance->ItemName = Object->GetStringField(TEXT("itemName"));
-			GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemName);
+			//GameInstance->ItemName = Object->GetStringField(TEXT("itemName"));
+			//GEngine->AddOnScreenDebugMessage(-1, 60.0f, FColor::Blue, GameInstance->ItemName);
 
-			UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
+			//UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
 		}
 	}
 }
@@ -115,6 +159,8 @@ void ULoginWidget::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttp
 //Like 'BeginPlay'
 void ULoginWidget::NativeConstruct()
 {
+	Super::NativeConstruct();
+
 	GameInstance = Cast<UMee_GameInstance>(GetGameInstance());
 	Http = &FHttpModule::Get();
 

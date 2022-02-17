@@ -2,6 +2,6 @@
 	"BuildId": "5f618922-8ad2-4670-8244-ba2ab6df25fa",
 	"Modules": 
 	{
-		"CodeStorySocketClientLib": "UE4Editor-CodeStorySocketClientLib-0001.dll"
+		"CodeStorySocketClientLib": "UE4Editor-CodeStorySocketClientLib.dll"
 	}
 }
