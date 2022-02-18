@@ -14,22 +14,21 @@ class MEE_HTTP_API UMee_GameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-private:
-	FString Session;
-
 public:
-	FString ItemType;
-	FString ItemName;
-	int32 Money;
+	FString Session;
+	FString UserID;
 
-	FString GetSession();
+	int32 Money;
+	FString EquipmentBody;
+	FString EquipmentHair;
+	TArray<FString> Inventory;
+
 
 	UFUNCTION(BlueprintCallable)
-		void GetUserData(FString& OutItemType, FString& OutItemName);
+		void GetUserData(FString& OutEquipmentBody, FString& OutEquipmentHair, int32& OutMoney, TArray<FString>& OutInventory);
 
 	UFUNCTION(BlueprintCallable)
 		int32 GetMoney();
-
 	UFUNCTION(BlueprintCallable)
 		void SetMoney(int32 _Money);
 	

@@ -3,15 +3,12 @@
 
 #include "Mee_GameInstance.h"
 
-void UMee_GameInstance::GetUserData(FString& OutItemType, FString& OutItemName)
+void UMee_GameInstance::GetUserData(FString& OutEquipmentBody, FString& OutEquipmentHair, int32& OutMoney, TArray<FString>& OutInventory)
 {
-	OutItemType = ItemType;
-	OutItemName = ItemName;
-}
-
-FString UMee_GameInstance::GetSession()
-{
-	return Session;
+	OutEquipmentBody = EquipmentBody;
+	OutEquipmentHair = EquipmentHair;
+	OutMoney = Money;
+	OutInventory = Inventory;
 }
 
 int32 UMee_GameInstance::GetMoney()
