@@ -12,26 +12,11 @@
 void ULoginWidget::HttpCall_Login(FString id, FString password)
 {
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
-	Request->OnProcessRequestComplete().BindUObject(this, &ULoginWidget::OnResponseReceived);
+	Request->OnProcessRequestComplete().BindUObject(this, &ULoginWidget::OnResponseReceived_Login);
 
 	FString PostBody = FString::Printf(TEXT("{ \"id\": \"%s\", \"password\" : \"%s\" }"), *id, *password);
 
 	Request->SetURL(LOGIN_URL);
-	Request->SetVerb("POST");
-	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
-	Request->SetHeader("Content-Type", TEXT("application/json"));
-	Request->SetContentAsString(PostBody);
-	Request->ProcessRequest();
-}
-
-void ULoginWidget::HttpCall_Signup(FString id, FString username, FString password)
-{
-	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
-	Request->OnProcessRequestComplete().BindUObject(this, &ULoginWidget::OnResponseReceived);
-
-	FString PostBody = FString::Printf(TEXT("{ \"id\": \"%s\", \"username\" : \"%s\", \"password\" : \"%s\" }"), *id, *username, *password);
-
-	Request->SetURL(SIGNUP_URL);
 	Request->SetVerb("POST");
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
 	Request->SetHeader("Content-Type", TEXT("application/json"));
@@ -52,7 +37,7 @@ void ULoginWidget::HttpCall_GetUserData()
 	Request->ProcessRequest();
 }
 
-void ULoginWidget::OnResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+void ULoginWidget::OnResponseReceived_Login(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	//Create a pointer to hold the json serialized data
 	TSharedPtr<FJsonObject> JsonObject;
@@ -138,6 +123,7 @@ void ULoginWidget::NativeConstruct()
 	GameInstance = Cast<UMee_GameInstance>(GetGameInstance());
 	Http = &FHttpModule::Get();
 
+	SignupWidget->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Signup->OnClicked.AddDynamic(this, &ULoginWidget::OnClick_Signup);
 	Button_Login->OnClicked.AddDynamic(this, &ULoginWidget::OnClick_Login);
 
@@ -145,7 +131,7 @@ void ULoginWidget::NativeConstruct()
 
 void ULoginWidget::OnClick_Signup()
 {
-	HttpCall_Signup(EditableText_id->GetText().ToString(), EditableText_username->GetText().ToString(), EditableText_password->GetText().ToString());
+	SignupWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void ULoginWidget::OnClick_Login()
