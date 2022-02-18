@@ -1,0 +1,1 @@
+start "DedicateServer" "C:\UnrealEngine\Engine\Binaries\Win64\UE4Editor.exe" "C:\UE4\Mee_HTTP\Mee_HTTP.uproject" -server -game -log
