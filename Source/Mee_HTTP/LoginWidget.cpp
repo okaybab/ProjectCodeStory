@@ -110,7 +110,7 @@ void ULoginWidget::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttp
 				TSharedPtr<FJsonObject> Object = (*Inventory)[i]->AsObject();
 				GameInstance->Inventory.Add(Object->GetStringField(TEXT("itemName")));
 			}
-			UGameplayStatics::OpenLevel(this, "P_Level");//Level 이동
+			UGameplayStatics::OpenLevel(this, "127.0.0.1");//Level 이동
 		}
 	}
 }
