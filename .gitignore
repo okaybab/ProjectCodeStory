@@ -1,6 +1,9 @@
 **/Binaries
 Binaries/*
 
+DedicateServer.bat
+Game.bat
+
 # Created by https://www.toptal.com/developers/gitignore/api/unrealengine
 # Edit at https://www.toptal.com/developers/gitignore?templates=unrealengine
 

@@ -1,1 +1,0 @@
-start "Client" "C:\UnrealEngine\Engine\Binaries\Win64\UE4Editor.exe" "C:\UE4\Mee_HTTP\Mee_HTTP.uproject" -game -WINDOWED -ResX=800 -ResY=600
