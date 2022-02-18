@@ -41,9 +41,9 @@ private:
 	void LookUp(float NewAxisValue);
 	void Turn(float NewAxisValue);
 
-	void TouchPressed(ETouchIndex::Type FingerIndex, FVector Location);
-	void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
-	void TouchReleased(ETouchIndex::Type FingerIndex, FVector Location);
+	//void TouchPressed(ETouchIndex::Type FingerIndex, FVector Location);
+	//void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
+	//void TouchReleased(ETouchIndex::Type FingerIndex, FVector Location);
 
 
 public:
