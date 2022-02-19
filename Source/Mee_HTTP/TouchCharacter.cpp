@@ -114,9 +114,9 @@ void ATouchCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ATouchCharacter::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ATouchCharacter::LookUp);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATouchCharacter::Turn);
-	//PlayerInputComponent->BindTouch(IE_Pressed, this, &ATouchCharacter::TouchPressed);
-	//PlayerInputComponent->BindTouch(IE_Repeat, this, &ATouchCharacter::TouchMoved);
-	//PlayerInputComponent->BindTouch(IE_Released, this, &ATouchCharacter::TouchReleased);
+	PlayerInputComponent->BindTouch(IE_Pressed, this, &ATouchCharacter::TouchPressed);
+	PlayerInputComponent->BindTouch(IE_Repeat, this, &ATouchCharacter::TouchMoved);
+	PlayerInputComponent->BindTouch(IE_Released, this, &ATouchCharacter::TouchReleased);
 }
 
 void ATouchCharacter::MoveForward(float NewAxisValue)
@@ -155,7 +155,7 @@ void ATouchCharacter::Turn(float NewAxisValue)
 	AddControllerYawInput(NewAxisValue);
 }
 
-/*
+
 void ATouchCharacter::TouchPressed(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	//ABLOG(Warning);
@@ -186,7 +186,6 @@ void ATouchCharacter::TouchReleased(ETouchIndex::Type FingerIndex, FVector Locat
 		//ABLOG(Warning, TEXT("%d"), IsTouchPress);
 	}
 }
-*/
 
 FVector2D ATouchCharacter::GetTouchScreenLocation()
 {
