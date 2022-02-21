@@ -48,7 +48,7 @@ void AMyActor::OnFrame(rtc::scoped_refptr<webrtc::I420BufferInterface> FrameBuff
 		VideoSize.Y = VideoHeight;
 		VideoTexture = UTexture2D::CreateTransient(VideoSize.X, VideoSize.Y);
 		VideoUpdateTextureRegion = new FUpdateTextureRegion2D(0, 0, 0, 0, VideoSize.X, VideoSize.Y);
-		UMaterialInstanceDynamic* DynamicMat = UMaterialInstanceDynamic::Create(PlaneMeshComponent->GetMaterial(0), nullptr);
+		DynamicMat = UMaterialInstanceDynamic::Create(PlaneMeshComponent->GetMaterial(0), nullptr);
 		DynamicMat->SetTextureParameterValue(FName("VTexture"), VideoTexture);
 		PlaneMeshComponent->SetMaterial(0, DynamicMat);
 		InitTexture();
@@ -127,6 +127,8 @@ void AMyActor::UpdateTextureRegions(UTexture2D* Texture, uint8* SrcData)
 	
 	FMemory::Memcpy( BinaryData, SrcData, (VideoSize.X * VideoSize.Y) * 4 );
 	Mip.BulkData.Unlock();
+
+	DynamicMat->SetTextureParameterValue(FName("VTexture"), VideoTexture);
 	Texture->UpdateResource();
 }
 

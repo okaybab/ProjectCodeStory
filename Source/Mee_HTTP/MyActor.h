@@ -65,6 +65,8 @@ protected:
 
 	TQueue<TArray<FColor>> RenderQueue;
 
+	UMaterialInstanceDynamic* DynamicMat;
+
 	double prev_timemills;
 
 	const int FPS = 5;
