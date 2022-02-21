@@ -41,6 +41,21 @@ void AHttpActor::HttpCall_BuyItem(FString itemCode, FString itemType)
 	Request->ProcessRequest();
 }
 
+void AHttpActor::HttpCall_ClearMinigame(int32 Score, int32 Money)
+{
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
+	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_ClearMinigame);//의미 없이 콜백받기.
+
+	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"score\": \"%d\", \"money\" : \"%d\" }"), *(MyGameInstance->UserID), Score, Money);
+
+	Request->SetURL(MINIGAME_URL);
+	Request->SetVerb("POST");
+	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
+	Request->SetHeader("Content-Type", TEXT("application/json"));
+	Request->SetContentAsString(PostBody);
+	Request->ProcessRequest();
+}
+
 void AHttpActor::OnResponseReceived_EquipItem(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
 	//Create a pointer to hold the json serialized data
@@ -94,6 +109,17 @@ void AHttpActor::OnResponseReceived_BuyItem(FHttpRequestPtr Request, FHttpRespon
 		}
 	}
 }
+
+void AHttpActor::OnResponseReceived_ClearMinigame(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	TSharedPtr<FJsonObject> JsonObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+	if (FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		//파싱할 데이터 없음.
+	}
+}
+
 
 // Called when the game starts or when spawned
 void AHttpActor::BeginPlay()
