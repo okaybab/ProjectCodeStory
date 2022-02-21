@@ -18,11 +18,14 @@ public:
 	ATestUploadImage();
 
 	TArray<UTexture2DDynamic*>* pTexture_2D;
+	TArray<FString> URL;
 	int32 Count;
 	bool Check;
 
 	UFUNCTION(BlueprintCallable)
 		void GetTexture(TArray<UTexture2DDynamic*>& Texture);
+	UFUNCTION(BlueprintCallable)
+		void GetURL(TArray<FString>& URL_String);
 
 protected:
 	// Called when the game starts or when spawned
@@ -46,4 +49,5 @@ public:
 private:
 	UFUNCTION(BlueprintCallable)
 	void OnDownloadImageSuccess(UTexture2DDynamic* Texture);
+	void UploadingSuccess(FString LinkURL);
 };
