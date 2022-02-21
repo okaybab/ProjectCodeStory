@@ -22,6 +22,11 @@ void ATestUploadImage::GetTexture(TArray<UTexture2DDynamic*> &Texture)
 	delete pTexture_2D;
 }
 
+void ATestUploadImage::GetURL(TArray<FString>& URL_String)
+{
+	URL_String = URL;
+}
+
 // Called when the game starts or when spawned
 void ATestUploadImage::BeginPlay()
 {
@@ -36,7 +41,7 @@ void ATestUploadImage::Tick(float DeltaTime)
 
 void ATestUploadImage::OnRequestComplete(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Orange, *Response->GetContentAsString());
+	//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Orange, *Response->GetContentAsString());
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *Response->GetContentAsString());
 
 	FString LinkURL;
@@ -53,17 +58,19 @@ void ATestUploadImage::OnRequestComplete(FHttpRequestPtr Request, FHttpResponseP
 		if (SubJsonObject.IsValid())
 		{
 			LinkURL = SubJsonObject->GetStringField("link");
+			UploadingSuccess(LinkURL);
+			
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, LinkURL);
+		//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, LinkURL);
 
 	}
 
-	UAsyncTaskDownloadImage* TaskDownloadImage = UAsyncTaskDownloadImage::DownloadImage(LinkURL);
-	if (TaskDownloadImage != nullptr)
-	{
-		TaskDownloadImage->OnSuccess.AddDynamic(this, &ATestUploadImage::OnDownloadImageSuccess);
-	}
+	//UAsyncTaskDownloadImage* TaskDownloadImage = UAsyncTaskDownloadImage::DownloadImage(LinkURL);
+	//if (TaskDownloadImage != nullptr)
+	//{
+	//	TaskDownloadImage->OnSuccess.AddDynamic(this, &ATestUploadImage::OnDownloadImageSuccess);
+	//}
 
 
 }
@@ -85,7 +92,7 @@ void ATestUploadImage::UploadImage()
 		EFileDialogFlags::Multiple, OpenFileNames);
 
 	Count = OpenFileNames.Num();
-	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, FString::FromInt(Count));
+	//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, FString::FromInt(Count));
 	for (int i = 0; i < Count; ++i)
 	{ 
 		auto HttpRequest = FHttpModule::Get().CreateRequest();
@@ -128,6 +135,16 @@ void ATestUploadImage::OnDownloadImageSuccess(UTexture2DDynamic* Texture)
 	pTexture_2D->Add(Texture);
 
 	if (pTexture_2D->Num() == Count)
+	{
+		Count = 0;
+		Check = true;
+	}
+}
+
+void ATestUploadImage::UploadingSuccess(FString LinkURL)
+{
+	URL.Add(LinkURL);
+	if (URL.Num() == Count)
 	{
 		Count = 0;
 		Check = true;
