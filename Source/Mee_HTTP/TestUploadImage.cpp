@@ -146,7 +146,6 @@ void ATestUploadImage::UploadingSuccess(FString LinkURL)
 	URL.Add(LinkURL);
 	if (URL.Num() == Count)
 	{
-		Count = 0;
 		Check = true;
 	}
 }
