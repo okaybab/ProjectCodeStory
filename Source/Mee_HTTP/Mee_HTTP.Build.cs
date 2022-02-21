@@ -8,7 +8,13 @@ public class Mee_HTTP : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Http", "Json", "JsonUtilities", "UMG", "CodeStorySocketClientLib" });
+		PublicDependencyModuleNames.AddRange(new string[] 
+		{ 
+			"Core", "CoreUObject", "Engine", "InputCore", "Http",
+			"Json", "JsonUtilities", "UMG", "CodeStorySocketClientLib", 
+			"WebRTC", "WebRTCPlugin",
+
+		});
 
 		//PrivateDependencyModuleNames.AddRange(new string[] {  });
 
