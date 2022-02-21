@@ -10,7 +10,7 @@ ATouchCharacter::ATouchCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	IsTouchPress = false;
+	//IsTouchPress = false;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -59,9 +59,9 @@ void ATouchCharacter::SetControlMode(int32 ControlMode)
 		SpringArm->TargetArmLength = 450.0f;
 		SpringArm->SetRelativeRotation(FRotator::ZeroRotator);
 		SpringArm->bUsePawnControlRotation = true;
-		SpringArm->bInheritPitch = true;
-		SpringArm->bInheritRoll = true;
-		SpringArm->bInheritYaw = true;
+		//SpringArm->bInheritPitch = true;
+		//SpringArm->bInheritRoll = true;
+		//SpringArm->bInheritYaw = true;
 		SpringArm->bDoCollisionTest = true;
 		bUseControllerRotationYaw = false;
 	}
@@ -73,6 +73,7 @@ void ATouchCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*//Touch
 	if (IsTouchPress) 
 	{
 		FVector2D VectorMinusResult = TouchEnd - TouchStart;
@@ -102,6 +103,7 @@ void ATouchCharacter::Tick(float DeltaTime)
 		
 		
 	}
+	*/
 
 }
 
@@ -112,11 +114,14 @@ void ATouchCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ATouchCharacter::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ATouchCharacter::MoveRight);
-	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ATouchCharacter::LookUp);
-	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATouchCharacter::Turn);
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+
+	/*//Touch
 	PlayerInputComponent->BindTouch(IE_Pressed, this, &ATouchCharacter::TouchPressed);
 	PlayerInputComponent->BindTouch(IE_Repeat, this, &ATouchCharacter::TouchMoved);
 	PlayerInputComponent->BindTouch(IE_Released, this, &ATouchCharacter::TouchReleased);
+	*/
 }
 
 void ATouchCharacter::MoveForward(float NewAxisValue)
@@ -143,19 +148,7 @@ void ATouchCharacter::MoveRight(float NewAxisValue)
 	}
 
 }
-
-void ATouchCharacter::LookUp(float NewAxisValue)
-{
-	//ABLOG(Warning, TEXT("%f"), NewAxisValue);
-	AddControllerPitchInput(NewAxisValue);
-}
-
-void ATouchCharacter::Turn(float NewAxisValue)
-{
-	AddControllerYawInput(NewAxisValue);
-}
-
-
+/*//Touch
 void ATouchCharacter::TouchPressed(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	//ABLOG(Warning);
@@ -198,3 +191,4 @@ FVector2D ATouchCharacter::GetTouchScreenLocation()
 	
 }
 
+*/

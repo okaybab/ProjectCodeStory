@@ -38,13 +38,12 @@ public:
 private:
 	void MoveForward(float NewAxisValue);
 	void MoveRight(float NewAxisValue);
-	void LookUp(float NewAxisValue);
-	void Turn(float NewAxisValue);
-
+	
+	/*//Touch
 	void TouchPressed(ETouchIndex::Type FingerIndex, FVector Location);
 	void TouchMoved(ETouchIndex::Type FingerIndex, FVector Location);
 	void TouchReleased(ETouchIndex::Type FingerIndex, FVector Location);
-
+	*/
 
 public:
 
@@ -57,6 +56,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	bool IsTouchPress;
 
-	FVector2D GetTouchScreenLocation();
+	//FVector2D GetTouchScreenLocation();
 
 };
