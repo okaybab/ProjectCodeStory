@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "HttpActor.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AHttpActor::AHttpActor(const class FObjectInitializer& ObjectInitializer)
@@ -53,6 +54,19 @@ void AHttpActor::HttpCall_ClearMinigame(int32 Score, int32 Money)
 	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
 	Request->SetHeader("Content-Type", TEXT("application/json"));
 	Request->SetContentAsString(PostBody);
+	Request->ProcessRequest();
+}
+
+void AHttpActor::HttpCall_GetUserData()
+{
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
+	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_GetUserData);
+
+	FString RequestURL = GET_USERDATA_URL + MyGameInstance->UserID;
+	Request->SetURL(RequestURL);
+	Request->SetVerb("GET");
+	Request->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
+	Request->SetHeader("Content-Type", TEXT("application/json"));
 	Request->ProcessRequest();
 }
 
@@ -117,6 +131,40 @@ void AHttpActor::OnResponseReceived_ClearMinigame(FHttpRequestPtr Request, FHttp
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
 		//파싱할 데이터 없음.
+		HttpCall_GetUserData();
+		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, TEXT("GetUserData()"));
+	}
+}
+
+void AHttpActor::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+{
+	//Create a pointer to hold the json serialized data
+	TSharedPtr<FJsonObject> JsonObject;
+
+	//Create a reader pointer to read the json data
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+	//Deserialize the json data given Reader and the actual object to deserialize
+	if (FJsonSerializer::Deserialize(Reader, JsonObject))//유저 데이터를 가져오는데 성공
+	{
+		FString EquipmentBody = JsonObject->GetStringField(TEXT("equipmentBody"));
+		FString EquipmentHair = JsonObject->GetStringField(TEXT("equipmentHair"));
+		int32 Money = JsonObject->GetIntegerField(TEXT("money"));
+
+		MyGameInstance->EquipmentBody = EquipmentBody;
+		MyGameInstance->EquipmentHair = EquipmentHair;
+		MyGameInstance->Money = Money;
+
+		const TArray<TSharedPtr<FJsonValue>>* Inventory;
+		if (JsonObject->TryGetArrayField(TEXT("inventory"), Inventory))
+		{
+			for (int i = 0; i < Inventory->Num(); ++i)
+			{
+				TSharedPtr<FJsonObject> Object = (*Inventory)[i]->AsObject();
+				MyGameInstance->Inventory.Add(Object->GetStringField(TEXT("itemName")));
+			}
+			UGameplayStatics::OpenLevel(this, "127.0.0.1");//Level 이동
+		}
 	}
 }
 
