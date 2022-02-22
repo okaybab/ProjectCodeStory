@@ -1,7 +1,7 @@
 {
-	"BuildId": "22eb1caf-9e54-4f62-8de9-1045d3e71195",
+	"BuildId": "7ef40255-2be9-4986-a0be-24faa1c8e55a",
 	"Modules": 
 	{
-		"RealTimeImport": "UE4Editor-RealTimeImport-0001.dll"
+		"RealTimeImport": "UE4Editor-RealTimeImport.dll"
 	}
 }
