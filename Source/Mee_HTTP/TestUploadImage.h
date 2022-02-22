@@ -18,7 +18,7 @@ public:
 	ATestUploadImage();
 
 	TArray<UTexture2DDynamic*>* pTexture_2D;
-	TArray<FString> URL;
+	TArray<FString>* URL;
 	int32 Count;
 	bool Check;
 
@@ -41,10 +41,10 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void UploadImage();
+	bool UploadImage();
 
 	UFUNCTION(BlueprintCallable)
-		bool CheckAllDownloaded();
+	bool CheckAllDownloaded();
 
 private:
 	UFUNCTION(BlueprintCallable)
