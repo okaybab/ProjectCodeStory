@@ -91,6 +91,11 @@ void ATestUploadImage::UploadImage()
 	DesktopPlatform->OpenFileDialog(NULL, TEXT("OpenFile"), DefaultPath, DefaultFile, TEXT("Image Files | *.png; *.jpg; *.bmp;"),
 		EFileDialogFlags::Multiple, OpenFileNames);
 
+	if (OpenFileNames.Num() == 0)
+	{
+		return;
+	}
+
 	Count = OpenFileNames.Num();
 	//GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Red, FString::FromInt(Count));
 	for (int i = 0; i < Count; ++i)
