@@ -24,7 +24,8 @@ void ATestUploadImage::GetTexture(TArray<UTexture2DDynamic*> &Texture)
 
 void ATestUploadImage::GetURL(TArray<FString>& URL_String)
 {
-	URL_String = URL;
+	URL_String = *URL;
+	delete URL;
 }
 
 // Called when the game starts or when spawned
@@ -75,12 +76,13 @@ void ATestUploadImage::OnRequestComplete(FHttpRequestPtr Request, FHttpResponseP
 
 }
 
-void ATestUploadImage::UploadImage()
+bool ATestUploadImage::UploadImage()
 {
 	Check = false;
 	pTexture_2D = new TArray<UTexture2DDynamic*>;
+	URL = new TArray<FString>;
 	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-	if (!ensure(DesktopPlatform != nullptr)) return;
+	if (!ensure(DesktopPlatform != nullptr)) return 0;
 
 	FString DefaultFile = TEXT("");
 	FString DefaultPath = TEXT("");
@@ -93,7 +95,7 @@ void ATestUploadImage::UploadImage()
 
 	if (OpenFileNames.Num() == 0)
 	{
-		return;
+		return 0;
 	}
 
 	Count = OpenFileNames.Num();
@@ -128,6 +130,8 @@ void ATestUploadImage::UploadImage()
 
 		HttpRequest->ProcessRequest();
 	}
+
+	return true;
 }
 
 bool ATestUploadImage::CheckAllDownloaded()
@@ -148,8 +152,8 @@ void ATestUploadImage::OnDownloadImageSuccess(UTexture2DDynamic* Texture)
 
 void ATestUploadImage::UploadingSuccess(FString LinkURL)
 {
-	URL.Add(LinkURL);
-	if (URL.Num() == Count)
+	URL->Add(LinkURL);
+	if (URL->Num() == Count)
 	{
 		Check = true;
 	}
