@@ -10,7 +10,7 @@
 
 #define BUYITEM_URL "http://192.168.110.200:3000/shop/buy"
 #define EQUIPITEM_URL "http://192.168.110.200:3000/user/item/equipment"
-#define MINIGAME_URL "http://192.168.110.200:3000/user/game"
+#define MINIGAME_URL "http://192.168.110.200:3000/user/game/"
 #define GET_USERDATA_URL "http://192.168.110.200:3000/user/information/"
 
 UCLASS()

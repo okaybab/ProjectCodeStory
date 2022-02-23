@@ -29,7 +29,7 @@ void URankingWidget::NativeConstruct()
 
 	HttpCall_GetRankData();
 	FTimerHandle RankingDataTimerHandle;
-	TimerManager.SetTimer(RankingDataTimerHandle, this, &URankingWidget::HttpCall_GetRankData, 600.0f, true);
+	TimerManager.SetTimer(RankingDataTimerHandle, this, &URankingWidget::HttpCall_GetRankData, 30.0f, true);
 }
 
 void URankingWidget::HttpCall_GetRankData()
