@@ -128,8 +128,9 @@ void AMyActor::UpdateTextureRegions(UTexture2D* Texture, uint8* SrcData)
 	FMemory::Memcpy( BinaryData, SrcData, (VideoSize.X * VideoSize.Y) * 4 );
 	Mip.BulkData.Unlock();
 
-	DynamicMat->SetTextureParameterValue(FName("VTexture"), VideoTexture);
 	Texture->UpdateResource();
+	DynamicMat->SetTextureParameterValue(FName("VTexture"), Texture);
+	UE_LOG(LogTemp, Log, TEXT("DP 2"));
 }
 
 // Called every frame
@@ -140,10 +141,13 @@ void AMyActor::Tick(float DeltaTime)
 		RefreshTimer += DeltaTime;
 		TArray<FColor> Data;
 		Data.Init(FColor(255, 0, 0, 255), VideoSize.X * VideoSize.Y);
+		UE_LOG(LogTemp, Log, TEXT("DP 1"));
+
 
 		if(!RenderQueue.IsEmpty() && RenderQueue.Dequeue(Data))
 		{
 			UpdateTextureRegions(VideoTexture, (uint8*) Data.GetData());
+			UE_LOG(LogTemp, Log, TEXT("DP 3"));
 		}		
 	}
 }
