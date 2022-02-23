@@ -61,7 +61,7 @@ void AHttpActor::HttpCall_GetUserData()
 {
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_GetUserData);
-	GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, TEXT("HttpCall_GetUserData()"));
+	GEngine->AddOnScreenDebugMessage(1, 100.0f, FColor::Green, TEXT("HttpCall_GetUserData()"));
 	FString RequestURL = GET_USERDATA_URL + MyGameInstance->UserID;
 	Request->SetURL(RequestURL);
 	Request->SetVerb("GET");
@@ -157,7 +157,7 @@ void AHttpActor::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttpRe
 				TSharedPtr<FJsonObject> Object = (*Inventory)[i]->AsObject();
 				MyGameInstance->Inventory.Add(Object->GetStringField(TEXT("itemName")));
 			}
-			UGameplayStatics::OpenLevel(this, "192.168.110.200");//Level 이동
+			UGameplayStatics::OpenLevel(this, "127.0.0.1");//Level 이동
 		}
 	}
 }
