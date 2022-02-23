@@ -47,7 +47,7 @@ void AHttpActor::HttpCall_ClearMinigame(int32 Score, int32 Money)
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_ClearMinigame);//의미 없이 콜백받기.
 
-	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"score\": \"%d\", \"money\" : \"%d\" }"), *(MyGameInstance->UserID), Score, Money);
+	FString PostBody = FString::Printf(TEXT("{ \"userId\" : \"%s\", \"score\": %d, \"money\" : %d }"), *(MyGameInstance->UserID), Score, Money);
 
 	Request->SetURL(MINIGAME_URL);
 	Request->SetVerb("POST");
@@ -61,7 +61,7 @@ void AHttpActor::HttpCall_GetUserData()
 {
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->OnProcessRequestComplete().BindUObject(this, &AHttpActor::OnResponseReceived_GetUserData);
-
+	GEngine->AddOnScreenDebugMessage(1, 2.0f, FColor::Green, TEXT("HttpCall_GetUserData()"));
 	FString RequestURL = GET_USERDATA_URL + MyGameInstance->UserID;
 	Request->SetURL(RequestURL);
 	Request->SetVerb("GET");
@@ -126,14 +126,8 @@ void AHttpActor::OnResponseReceived_BuyItem(FHttpRequestPtr Request, FHttpRespon
 
 void AHttpActor::OnResponseReceived_ClearMinigame(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
-	TSharedPtr<FJsonObject> JsonObject;
-	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-	if (FJsonSerializer::Deserialize(Reader, JsonObject))
-	{
-		//파싱할 데이터 없음.
-		HttpCall_GetUserData();
-		GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, TEXT("GetUserData()"));
-	}
+	GEngine->AddOnScreenDebugMessage(-1, 100.0f, FColor::Blue, TEXT("GetUserData()"));
+	HttpCall_GetUserData();
 }
 
 void AHttpActor::OnResponseReceived_GetUserData(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
